@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="recipeC#@localhost" uuid="dae7f202-0d7e-4846-85e6-8d8c2f9936b2">
+    <data-source source="LOCAL" name="recipeC#@localhost" uuid="9d5d6a29-4a86-4572-8d08-66456d3b2ae7">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <configured-by-url>true</configured-by-url>

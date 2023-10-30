@@ -93,19 +93,19 @@ namespace recipes_backend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("recipes_backend.Models.UserFollowers", b =>
+            modelBuilder.Entity("UserUser", b =>
                 {
-                    b.Property<long>("FollowedUserId")
+                    b.Property<long>("FollowersId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("FollowerUserId")
+                    b.Property<long>("FollowingId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("FollowedUserId", "FollowerUserId");
+                    b.HasKey("FollowersId", "FollowingId");
 
-                    b.HasIndex("FollowerUserId");
+                    b.HasIndex("FollowingId");
 
-                    b.ToTable("UserFollowers");
+                    b.ToTable("UserUser");
                 });
 
             modelBuilder.Entity("recipes_backend.Models.Recipe", b =>
@@ -119,23 +119,19 @@ namespace recipes_backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("recipes_backend.Models.UserFollowers", b =>
+            modelBuilder.Entity("UserUser", b =>
                 {
-                    b.HasOne("recipes_backend.Models.User", "FollowedUser")
+                    b.HasOne("recipes_backend.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("FollowedUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("FollowersId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("recipes_backend.Models.User", "FollowerUser")
+                    b.HasOne("recipes_backend.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("FollowerUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("FollowedUser");
-
-                    b.Navigation("FollowerUser");
                 });
 
             modelBuilder.Entity("recipes_backend.Models.User", b =>

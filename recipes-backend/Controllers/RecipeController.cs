@@ -142,9 +142,6 @@ public class RecipeController : ControllerBase
             // You may want to handle this case differently, e.g., return an error response.
             throw new Exception("User not found or conversion failed.");
         }
-
         return userId;
     }
-
-
 }

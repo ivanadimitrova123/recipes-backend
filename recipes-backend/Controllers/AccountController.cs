@@ -39,11 +39,25 @@ public class AccountController : ControllerBase
         if (long.TryParse(userIdClaim.Value, out long userId))
         {
             var user = _context.Users
+                .Include(u => u.Recipes)
                 .FirstOrDefault(u => u.Id == userId);
 
             if (user != null)
             {
-                return Ok(user);
+                var userData = new
+                {
+                    user.Id,
+                    user.Username,
+                    user.Email,
+                    user.FirstName,
+                    user.LastName,
+                    Recipes = user.Recipes.Select(recipe => new
+                    {
+                        recipe.Id,
+                        recipe.Name,
+                        // Include other recipe properties you need
+                    }).ToList() };
+                return Ok(userData);
             }
         }
         return NotFound("User not found or conversion failed.");
@@ -118,7 +132,4 @@ public class AccountController : ControllerBase
 
         //return Ok("Login successful.");
     }
-
-
-
 }

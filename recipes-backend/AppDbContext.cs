@@ -24,6 +24,10 @@ namespace recipes_backend
                 .WithMany(u => u.Recipes)
                 .HasForeignKey(r => r.UserId);
             
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Followers)
+                .WithMany(u => u.Following);
+            
             base.OnModelCreating(modelBuilder);
         }
     }
