@@ -15,6 +15,8 @@ namespace recipes_backend
 
         // DbSet for your Recipe class
         public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<Picture> Pictures { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +30,12 @@ namespace recipes_backend
                 .HasMany(u => u.Followers)
                 .WithMany(u => u.Following);
             
+            // Configure the one-to-one relationship with ProfilePicture
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.ProfilePicture)
+                .WithOne()
+                .HasForeignKey<User>(u => u.ProfilePictureId); 
+
             base.OnModelCreating(modelBuilder);
         }
     }

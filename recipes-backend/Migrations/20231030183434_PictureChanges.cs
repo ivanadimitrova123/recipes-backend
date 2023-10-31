@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -6,10 +7,25 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace recipes_backend.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class PictureChanges : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Picture",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ImageData = table.Column<byte[]>(type: "bytea", nullable: false),
+                    FileName = table.Column<string>(type: "text", nullable: false),
+                    ContentType = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Picture", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -21,11 +37,17 @@ namespace recipes_backend.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
-                    ProfilePicture = table.Column<string>(type: "text", nullable: false)
+                    ProfilePictureId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Picture_ProfilePictureId",
+                        column: x => x.ProfilePictureId,
+                        principalTable: "Picture",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,6 +103,12 @@ namespace recipes_backend.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_ProfilePictureId",
+                table: "Users",
+                column: "ProfilePictureId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserUser_FollowingId",
                 table: "UserUser",
                 column: "FollowingId");
@@ -96,6 +124,9 @@ namespace recipes_backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Picture");
         }
     }
 }

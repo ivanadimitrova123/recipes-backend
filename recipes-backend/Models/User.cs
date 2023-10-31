@@ -13,7 +13,12 @@ public class User
     public string Email { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string ProfilePicture { get; set; }
+    [ForeignKey("PictureId")]
+    public long? ProfilePictureId { get; set; }
+
+    [JsonIgnore]
+    public Picture? ProfilePicture { get; set; }
+  
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
     
     // Users that the current user is following

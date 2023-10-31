@@ -39,6 +39,7 @@ public class AccountController : ControllerBase
         if (long.TryParse(userIdClaim.Value, out long userId))
         {
             var user = _context.Users
+                .Include(u => u.ProfilePicture) 
                 .Include(u => u.Recipes)
                 .FirstOrDefault(u => u.Id == userId);
 
@@ -51,14 +52,45 @@ public class AccountController : ControllerBase
                     user.Email,
                     user.FirstName,
                     user.LastName,
+                    ProfilePicture = new
+                    {
+                        user.ProfilePictureId
+                        // Include other profile picture properties you need (e.g., ImageData, FileName, ContentType)
+                    },
                     Recipes = user.Recipes.Select(recipe => new
                     {
                         recipe.Id,
                         recipe.Name,
                         // Include other recipe properties you need
-                    }).ToList() };
-                return Ok(userData);
+                    }).ToList()
+                };
+
+                var image = _context.Pictures.Find(user.ProfilePictureId);
+
+                if (image == null)
+                {
+                    return NotFound("Image not found");
+                }
+
+               // return File(image.ImageData, "application/octet-stream");
+               //return Ok(user); 
+               //return File(image.ImageData, "image/png");
+               // Construct the image URL based on your server's URL and the image's ID
+               string imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{image.Id}";
+
+               // Create a JSON container that includes both user data and the image URL
+               var combinedData = new
+               {
+                   UserData = userData,
+                   ImageUrl = imageUrl
+               };
+
+               // Return the combined data as JSON
+               return Ok(combinedData);
+               
             }
+
+            //return Ok(user);            }
         }
         return NotFound("User not found or conversion failed.");
     }
@@ -73,6 +105,8 @@ public class AccountController : ControllerBase
                 ModelState.AddModelError("Email", "Email is already in use.");
                 return BadRequest(ModelState);
             }
+            model.ProfilePictureId = 3;
+            
             // Hash the user's password
             model.Password = _passwordHasher.HashPassword(model, model.Password);
 
@@ -125,11 +159,6 @@ public class AccountController : ControllerBase
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
         // Return the JWT token as part of the response.
-        return Ok(new
-        {
-            Token = tokenString,
-        });
-
-        //return Ok("Login successful.");
+        return Ok(new { Token = tokenString, });
     }
 }
