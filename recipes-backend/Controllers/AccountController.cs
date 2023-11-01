@@ -55,13 +55,11 @@ public class AccountController : ControllerBase
                     ProfilePicture = new
                     {
                         user.ProfilePictureId
-                        // Include other profile picture properties you need (e.g., ImageData, FileName, ContentType)
                     },
                     Recipes = user.Recipes.Select(recipe => new
                     {
                         recipe.Id,
                         recipe.Name,
-                        // Include other recipe properties you need
                     }).ToList()
                 };
 
@@ -71,26 +69,16 @@ public class AccountController : ControllerBase
                 {
                     return NotFound("Image not found");
                 }
+                string imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{image.Id}";
 
-               // return File(image.ImageData, "application/octet-stream");
-               //return Ok(user); 
-               //return File(image.ImageData, "image/png");
-               // Construct the image URL based on your server's URL and the image's ID
-               string imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{image.Id}";
-
-               // Create a JSON container that includes both user data and the image URL
                var combinedData = new
                {
                    UserData = userData,
                    ImageUrl = imageUrl
                };
-
-               // Return the combined data as JSON
                return Ok(combinedData);
                
             }
-
-            //return Ok(user);            }
         }
         return NotFound("User not found or conversion failed.");
     }
@@ -105,12 +93,11 @@ public class AccountController : ControllerBase
                 ModelState.AddModelError("Email", "Email is already in use.");
                 return BadRequest(ModelState);
             }
-            model.ProfilePictureId = 3;
+            model.ProfilePictureId = null;
             
             // Hash the user's password
             model.Password = _passwordHasher.HashPassword(model, model.Password);
 
-            // Add the user to the database
             _context.Users.Add(model);
             await _context.SaveChangesAsync();
 

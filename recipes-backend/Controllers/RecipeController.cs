@@ -45,7 +45,9 @@ public class RecipeController : ControllerBase
     public IActionResult GetRecipeById(long id)
     {
         // Find the recipe by its ID
-        var recipe = _context.Recipes.FirstOrDefault(r => r.Id == id);
+        var recipe = _context.Recipes
+            .Include(r => r.Picture)
+            .FirstOrDefault(r => r.Id == id);
 
         if (recipe == null)
         {
@@ -57,33 +59,47 @@ public class RecipeController : ControllerBase
 
 
     [HttpPost]
-    public IActionResult CreateRecipe([FromBody] Recipe recipe)
+    public IActionResult CreateRecipe([FromForm] Recipe recipe, IFormFile photo)
     {
-        // Check if a user is authenticated
         if (!User.Identity.IsAuthenticated)
         {
             return Unauthorized("You must be logged in to create a recipe.");
         }
-
-        // Get the currently authenticated user's ID
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
         if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out long userId))
         {
             return Unauthorized("User not found or conversion failed.");
         }
-        
+        byte[] photoData = null;
+        string photoContentType = null;
+
+        if (photo != null && photo.Length > 0)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                photo.CopyTo(memoryStream);
+                photoData = memoryStream.ToArray();
+                photoContentType = photo.ContentType;
+            }
+        }
+        Picture pic = new Picture();
+        pic.ImageData = photoData;
+        pic.ContentType = photoContentType;
+        pic.FileName = "";
+        _context.Pictures.Add(pic);
+        _context.SaveChanges();
+        pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/images/{pic.Id}";
+        recipe.Picture = pic;
+        recipe.PictureId = pic.Id;
         recipe.UserId = userId;
-        // Add the recipe to the database
         _context.Recipes.Add(recipe);
         _context.SaveChanges();
-
-        // Return the created recipe in the HTTP response
         return CreatedAtAction("GetRecipeById", new { id = recipe.Id }, recipe);
     }
     
     [HttpPut("{id}")]
-    public IActionResult EditRecipe(long id, [FromBody] Recipe updatedRecipe)
+    public IActionResult EditRecipe(long id, [FromForm] Recipe updatedRecipe,IFormFile photo)
     {
         // Find the recipe by its ID
         var recipe = _context.Recipes.FirstOrDefault(r => r.Id == id);
@@ -98,11 +114,30 @@ public class RecipeController : ControllerBase
         {
             return Forbid("You are not authorized to edit this recipe.");
         }
-
+        byte[] photoData = null;
+        string photoContentType = null;
+        
+        if (photo != null && photo.Length > 0)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                photo.CopyTo(memoryStream);
+                photoData = memoryStream.ToArray();
+                photoContentType = photo.ContentType;
+            }
+        }
+        Picture pic = new Picture();
+        pic.ImageData = photoData;
+        pic.ContentType = photoContentType;
+        pic.FileName = "";
+        _context.Pictures.Add(pic);
+        _context.SaveChanges();
+        pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/images/{pic.Id}";
         // Update the recipe properties
         recipe.Name = updatedRecipe.Name;
         recipe.Description = updatedRecipe.Description;
-        recipe.Picture = updatedRecipe.Picture;
+        recipe.Picture = pic;
+        recipe.PictureId = pic.Id;
         recipe.Ingredients = updatedRecipe.Ingredients;
 
         _context.SaveChanges();
@@ -126,7 +161,10 @@ public class RecipeController : ControllerBase
         {
             return Forbid("You are not authorized to delete this recipe.");
         }
-
+        
+       
+        Picture i = _context.Pictures.FirstOrDefault(i => i.Id == recipe.PictureId);
+        _context.Pictures.Remove(i); 
         _context.Recipes.Remove(recipe);
         _context.SaveChanges();
 

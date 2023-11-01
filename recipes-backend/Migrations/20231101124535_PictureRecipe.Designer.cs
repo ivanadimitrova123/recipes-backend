@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using recipes_backend;
@@ -12,9 +13,10 @@ using recipes_backend;
 namespace recipes_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231101124535_PictureRecipe")]
+    partial class PictureRecipe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,8 +144,7 @@ namespace recipes_backend.Migrations
                 {
                     b.HasOne("recipes_backend.Models.Picture", "Picture")
                         .WithOne()
-                        .HasForeignKey("recipes_backend.Models.Recipe", "PictureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("recipes_backend.Models.Recipe", "PictureId");
 
                     b.HasOne("recipes_backend.Models.User", "User")
                         .WithMany("Recipes")

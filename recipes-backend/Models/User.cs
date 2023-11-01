@@ -15,10 +15,9 @@ public class User
     public string LastName { get; set; }
     [ForeignKey("PictureId")]
     public long? ProfilePictureId { get; set; }
-
     [JsonIgnore]
     public Picture? ProfilePicture { get; set; }
-  
+    [JsonIgnore]
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
     
     // Users that the current user is following

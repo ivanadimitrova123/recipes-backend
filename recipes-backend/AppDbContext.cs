@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using recipes_backend.Models;
 
 namespace recipes_backend
@@ -35,6 +34,13 @@ namespace recipes_backend
                 .HasOne(u => u.ProfilePicture)
                 .WithOne()
                 .HasForeignKey<User>(u => u.ProfilePictureId); 
+            
+            modelBuilder.Entity<Recipe>()
+                .HasOne(u => u.Picture)
+                .WithOne()
+                .HasForeignKey<Recipe>(u => u.PictureId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             base.OnModelCreating(modelBuilder);
         }

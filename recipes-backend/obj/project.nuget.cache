@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SH415Vc3WoFISIgTxPp5ex3lXxheE5a2WO8W+wPdi6J/m1CGI83+Ck9Qd0B5a/AD8BnAnZ5zzfHUVxpe4Jii8Q==",
+  "dgSpecHash": "FFtDZDhYtlzqcNdt9HVqL1qIadNjAKTPX5CwEakhxx7Tk2KSVdpz2uWS2Kspzpgu3VWg765zJugSDxRbSLDKiQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ivana\\Desktop\\recipe-Backend\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
+  "projectFilePath": "C:\\Users\\ivana\\Desktop\\aa\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ivana\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\ivana\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.23\\microsoft.aspnetcore.authentication.jwtbearer.6.0.23.nupkg.sha512",

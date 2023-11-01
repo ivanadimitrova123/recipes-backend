@@ -18,55 +18,7 @@ public class PictureController : ControllerBase
     {
         _context = context;
     }
-
-   /* [HttpPost]
-    public async Task<IActionResult> UploadImage(IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-            return BadRequest("Invalid file");
-        
-        // Get the currently logged-in user
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return Unauthorized("User not authenticated");
-        }
-
-        if (long.TryParse(userIdClaim.Value, out long userId))
-        {
-            // Find the user by ID
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
-            using (var memoryStream = new MemoryStream())
-            {
-                await file.CopyToAsync(memoryStream);
-                var image = new Picture
-                {
-                    FileName = file.FileName,
-                    ImageData = memoryStream.ToArray(),
-                    ContentType = file.ContentType
-                };
-
-                _context.Pictures.Add(image);
-                await _context.SaveChangesAsync();
-                // Set the user's ProfilePictureId to the ID of the uploaded Picture
-                user.ProfilePictureId = image.Id;
-                await _context.SaveChangesAsync();
-                // Construct the image URL based on your server's URL and the image's ID
-                string imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/images/{image.Id}";
-
-                // Return the image URL in the response
-                return Ok(new { imageUrl });
-                // return Ok("Image uploaded successfully");
-            }
-        }
-        return NotFound("User not found or conversion failed.");
-    }*/
+    
    [HttpPost]
    [Authorize]
    public async Task<IActionResult> UploadImage(IFormFile file)
