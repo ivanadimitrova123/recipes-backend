@@ -26,6 +26,39 @@ public class AccountController : ControllerBase
         _passwordHasher = passwordHasher;
     }
     
+    [HttpGet("user/{userId}")]
+    public IActionResult GetUserProfile(long userId)
+    {
+        // Retrieve the user's profile by their user ID
+        var userProfile = _context.Users
+            .Include(u=>u.Recipes)
+            .Include(u => u.ProfilePicture)
+            .FirstOrDefault(u => u.Id == userId);
+
+        if (userProfile == null)
+        {
+            return NotFound("User not found.");
+        }
+        // Create an anonymous object to send only the necessary data
+        var userData = new
+        {
+            Id = userProfile.Id,
+            Username = userProfile.Username,
+            FirstName = userProfile.FirstName,
+            LastName = userProfile.LastName,
+            Recipes = userProfile.Recipes // Include the user's recipes in the response
+        };
+
+        // You can further customize the response structure as needed
+
+        return Ok(new
+        {
+            userData,
+            imageUrl = userProfile.ProfilePicture?.FileName
+        });
+    }
+
+    
     [HttpGet("current")]
     [Authorize]
     public IActionResult GetCurrentUserInfo()

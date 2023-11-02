@@ -1,10 +1,8 @@
 ﻿namespace recipes_backend.Controllers;
-
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using recipes_backend.Models;
 
 [Route("api/follow")]
 [ApiController]
@@ -23,7 +21,10 @@ public class FollowController : ControllerBase
     {
         // Get the authenticated user's ID
         var userId = GetUserId();
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        var user = _context.Users
+            .Include(u => u.Followers)
+            .Include(u => u.Following)
+            .FirstOrDefault(u => u.Id == userId);
 
         if (user == null)
         {
@@ -33,7 +34,9 @@ public class FollowController : ControllerBase
         {
             return BadRequest("You cannot follow yourself.");
         }
-        var followedUser = _context.Users.FirstOrDefault(u => u.Id == followedUserId);
+        var followedUser = _context.Users
+            .Include(u => u.Following)
+            .FirstOrDefault(u => u.Id == followedUserId);
 
         if (followedUser == null)
         {
@@ -57,13 +60,18 @@ public class FollowController : ControllerBase
     {
         // Get the authenticated user's ID
         var userId = GetUserId();
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        var user = _context.Users
+            .Include(u => u.Followers)
+            .Include(u => u.Following)
+            .FirstOrDefault(u => u.Id == userId);
 
         if (user == null)
         {
             return NotFound("User not found.");
         }
-        var followedUser = _context.Users.FirstOrDefault(u => u.Id == followedUserId);
+        var followedUser = _context.Users
+            .Include(u => u.Following)
+            .FirstOrDefault(u => u.Id == followedUserId);
 
         if (followedUser == null)
         {
