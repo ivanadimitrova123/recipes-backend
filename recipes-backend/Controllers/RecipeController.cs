@@ -89,7 +89,7 @@ public class RecipeController : ControllerBase
         pic.FileName = "";
         _context.Pictures.Add(pic);
         _context.SaveChanges();
-        pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/images/{pic.Id}";
+        pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{pic.Id}";
         recipe.Picture = pic;
         recipe.PictureId = pic.Id;
         recipe.UserId = userId;
@@ -132,7 +132,7 @@ public class RecipeController : ControllerBase
         pic.FileName = "";
         _context.Pictures.Add(pic);
         _context.SaveChanges();
-        pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/images/{pic.Id}";
+        pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{pic.Id}";
         // Update the recipe properties
         recipe.Name = updatedRecipe.Name;
         recipe.Description = updatedRecipe.Description;

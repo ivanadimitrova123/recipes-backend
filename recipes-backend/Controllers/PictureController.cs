@@ -61,7 +61,7 @@ public class PictureController : ControllerBase
                user.ProfilePictureId = image.Id;
                await _context.SaveChangesAsync();
                // Construct the image URL based on your server's URL and the image's ID
-               string imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/images/{image.Id}";
+               string imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{image.Id}";
 
                // Return the image URL in the response
                return Ok(new { imageUrl });

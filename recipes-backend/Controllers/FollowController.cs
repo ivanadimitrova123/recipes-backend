@@ -23,30 +23,22 @@ public class FollowController : ControllerBase
     {
         // Get the authenticated user's ID
         var userId = GetUserId();
-
-        // Check if the user exists
         var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
         if (user == null)
         {
             return NotFound("User not found.");
         }
-
-        // Check if the user is trying to follow themselves
         if (user.Id == followedUserId)
         {
             return BadRequest("You cannot follow yourself.");
         }
-
-        // Check if the user to be followed exists
         var followedUser = _context.Users.FirstOrDefault(u => u.Id == followedUserId);
 
         if (followedUser == null)
         {
             return NotFound("User to be followed not found.");
         }
-
-        // Check if the user is already following the target user
         if (user.Following.Contains(followedUser))
         {
             return BadRequest("You are already following this user.");
@@ -55,7 +47,6 @@ public class FollowController : ControllerBase
         // Follow the user
         user.Following.Add(followedUser);
         followedUser.Followers.Add(user);
-
         _context.SaveChanges();
 
         return Ok("You are now following this user.");
@@ -66,24 +57,18 @@ public class FollowController : ControllerBase
     {
         // Get the authenticated user's ID
         var userId = GetUserId();
-
-        // Check if the user exists
         var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
         if (user == null)
         {
             return NotFound("User not found.");
         }
-
-        // Check if the user to be unfollowed exists
         var followedUser = _context.Users.FirstOrDefault(u => u.Id == followedUserId);
 
         if (followedUser == null)
         {
             return NotFound("User to be unfollowed not found.");
         }
-
-        // Check if the user is currently following the target user
         if (!user.Following.Contains(followedUser))
         {
             return BadRequest("You are not currently following this user.");
@@ -92,7 +77,6 @@ public class FollowController : ControllerBase
         // Unfollow the user
         user.Following.Remove(followedUser);
         followedUser.Followers.Remove(user);
-
         _context.SaveChanges();
 
         return Ok("You have unfollowed this user.");
@@ -103,10 +87,9 @@ public class FollowController : ControllerBase
     {
         // Get the authenticated user's ID
         var userId = GetUserId();
-
-        // Check if the user exists
         var user = _context.Users
             .Include(u => u.Following)
+            .Include(u=>u.ProfilePicture)
             .FirstOrDefault(u => u.Id == userId);
 
         if (user == null)
@@ -116,7 +99,6 @@ public class FollowController : ControllerBase
 
         // Retrieve the users that the current user is following
         var followingUsers = user.Following.ToList();
-
         return Ok(followingUsers);
     }
 
