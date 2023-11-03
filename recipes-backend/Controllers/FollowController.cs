@@ -126,11 +126,27 @@ public class FollowController : ControllerBase
         {
             return NotFound("User not found.");
         }
+        // Create a list to store the recipes and their associated user's images
+        var recipesWithImages = new List<object>();
 
-        // Get the recipes of the users they follow
-        var recipes = user.Following.SelectMany(followedUser => followedUser.Recipes).ToList();
+        foreach (var followedUser in user.Following)
+        {
+            foreach (var recipe in followedUser.Recipes)
+            {
+                var followedUserImage = _context.Pictures.Find(followedUser.ProfilePictureId);
+                var recipeImage = _context.Pictures.Find(recipe.PictureId);
 
-        return Ok(recipes);
+                // Add the recipe and its associated user's image to the list
+                recipesWithImages.Add(new
+                {
+                    recipe = recipe,
+                    userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{followedUserImage.Id}",
+                    recipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipeImage.Id}"
+                });
+            }
+        }
+
+        return Ok(recipesWithImages);
     }
 
 

@@ -26,6 +26,14 @@ public class AccountController : ControllerBase
         _passwordHasher = passwordHasher;
     }
     
+    [HttpGet("allUsers")]
+    public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+    {
+        var users = await _context.Users.ToListAsync();
+        return users;
+    }
+
+    
     [HttpGet("user/{userId}")]
     public IActionResult GetUserProfile(long userId)
     {
@@ -46,16 +54,21 @@ public class AccountController : ControllerBase
             Username = userProfile.Username,
             FirstName = userProfile.FirstName,
             LastName = userProfile.LastName,
-            Recipes = userProfile.Recipes // Include the user's recipes in the response
+            userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{userProfile.ProfilePictureId}",
+            //Recipes = userProfile.Recipes
+            Recipes = userProfile.Recipes.Select(recipe => new
+            {   
+                recipe.Id,
+                recipe.Name,
+                recipe.PictureId,
+                RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}"
+
+            }).ToList()
         };
 
-        // You can further customize the response structure as needed
+        var image = _context.Pictures.Find(userProfile.ProfilePictureId);
 
-        return Ok(new
-        {
-            userData,
-            imageUrl = userProfile.ProfilePicture?.FileName
-        });
+        return Ok(userData);
     }
 
     
@@ -76,6 +89,11 @@ public class AccountController : ControllerBase
                 .Include(u => u.Recipes)
                 .FirstOrDefault(u => u.Id == userId);
 
+            if (user.ProfilePictureId == null)
+            {
+                user.ProfilePictureId = 1;
+            }
+
             if (user != null)
             {
                 var userData = new
@@ -85,31 +103,23 @@ public class AccountController : ControllerBase
                     user.Email,
                     user.FirstName,
                     user.LastName,
+                    user.ProfilePictureId,
                     ProfilePicture = new
                     {
                         user.ProfilePictureId
                     },
+                    UserImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{user.ProfilePictureId}",
                     Recipes = user.Recipes.Select(recipe => new
-                    {
+                    {   
                         recipe.Id,
                         recipe.Name,
+                        recipe.PictureId,
+                        RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}"
+
                     }).ToList()
                 };
-
-                var image = _context.Pictures.Find(user.ProfilePictureId);
-
-                if (image == null)
-                {
-                    return NotFound("Image not found");
-                }
-                string imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{image.Id}";
-
-               var combinedData = new
-               {
-                   UserData = userData,
-                   ImageUrl = imageUrl
-               };
-               return Ok(combinedData);
+                
+               return Ok(userData);
                
             }
         }

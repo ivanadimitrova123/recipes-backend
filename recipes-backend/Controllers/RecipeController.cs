@@ -47,6 +47,7 @@ public class RecipeController : ControllerBase
         // Find the recipe by its ID
         var recipe = _context.Recipes
             .Include(r => r.Picture)
+            .Include(r=>r.User)
             .FirstOrDefault(r => r.Id == id);
 
         if (recipe == null)
