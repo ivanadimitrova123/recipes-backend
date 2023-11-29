@@ -26,5 +26,10 @@ public class User
 
     // Users who are following the current user
     public ICollection<User> Followers { get; set; } = new List<User>();
-    
+
+    //Recepies that the user has saved
+    public ICollection <UserSavedRecipe>SavedRecepies { get; set; }
+
+    public ICollection<UserGrades> UsersGrades { get; set; }
+
 }

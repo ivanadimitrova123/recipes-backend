@@ -56,6 +56,10 @@ namespace recipes_backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Cook")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -64,6 +68,10 @@ namespace recipes_backend.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -71,8 +79,23 @@ namespace recipes_backend.Migrations
                     b.Property<long?>("PictureId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Prep")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Total")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("Yield")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -123,6 +146,55 @@ namespace recipes_backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("recipes_backend.Models.UserGrades", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("RecipeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserGrades");
+                });
+
+            modelBuilder.Entity("recipes_backend.Models.UserSavedRecipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("RecipeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSavedRecipe");
+                });
+
             modelBuilder.Entity("UserUser", b =>
                 {
                     b.Property<long>("FollowersId")
@@ -165,6 +237,44 @@ namespace recipes_backend.Migrations
                     b.Navigation("ProfilePicture");
                 });
 
+            modelBuilder.Entity("recipes_backend.Models.UserGrades", b =>
+                {
+                    b.HasOne("recipes_backend.Models.Recipe", "Recipe")
+                        .WithMany("UsersGrades")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("recipes_backend.Models.User", "User")
+                        .WithMany("UsersGrades")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("recipes_backend.Models.UserSavedRecipe", b =>
+                {
+                    b.HasOne("recipes_backend.Models.Recipe", "Recipe")
+                        .WithMany("SavedRecepies")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("recipes_backend.Models.User", "User")
+                        .WithMany("SavedRecepies")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("UserUser", b =>
                 {
                     b.HasOne("recipes_backend.Models.User", null)
@@ -180,9 +290,20 @@ namespace recipes_backend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("recipes_backend.Models.Recipe", b =>
+                {
+                    b.Navigation("SavedRecepies");
+
+                    b.Navigation("UsersGrades");
+                });
+
             modelBuilder.Entity("recipes_backend.Models.User", b =>
                 {
                     b.Navigation("Recipes");
+
+                    b.Navigation("SavedRecepies");
+
+                    b.Navigation("UsersGrades");
                 });
 #pragma warning restore 612, 618
         }

@@ -40,9 +40,34 @@ namespace recipes_backend
                 .WithOne()
                 .HasForeignKey<Recipe>(u => u.PictureId)
                 .OnDelete(DeleteBehavior.Cascade);
+          
+            modelBuilder.Entity<UserGrades>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.UsersGrades)
+                .HasForeignKey(ug =>  ug.UserId);
 
+            modelBuilder.Entity<UserGrades>()
+                .HasOne(ug => ug.Recipe)
+                .WithMany(r => r.UsersGrades)
+                .HasForeignKey(ug => ug.RecipeId);
+
+            modelBuilder.Entity<UserSavedRecipe>()
+                .HasOne(usr => usr.User)
+                .WithMany(u => u.SavedRecepies)
+                .HasForeignKey(usr =>  usr.UserId);
+
+            modelBuilder.Entity<UserSavedRecipe>()
+                .HasOne(usr => usr.Recipe)
+                .WithMany(r => r.SavedRecepies)
+                .HasForeignKey(usr => usr.RecipeId);
 
             base.OnModelCreating(modelBuilder);
         }
+
+
+        public DbSet<recipes_backend.Models.UserSavedRecipe>? UserSavedRecipe { get; set; }
+
+
+        public DbSet<recipes_backend.Models.UserGrades>? UserGrades { get; set; }
     }
 }

@@ -22,6 +22,16 @@ namespace recipes_backend.Models
         public long UserId { get; set; }
         [JsonIgnore]
         public User? User { get; set; }
-        
+
+        public string Level {  get; set; }
+        public string Prep { get; set; }
+        public string Cook {  get; set; }
+        public string Total {  get; set; }
+        public string Yield { get; set; }
+        public float Rating { get; set; } = 0;
+
+        public ICollection<UserGrades> UsersGrades { get; set; }
+        public ICollection<UserSavedRecipe> SavedRecepies { get; set; }
+
     }
 }
