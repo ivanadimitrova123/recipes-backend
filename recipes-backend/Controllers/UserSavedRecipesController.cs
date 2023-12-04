@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using recipes_backend.Models;
 
 namespace recipes_backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/saverecipe")]
     [ApiController]
     public class UserSavedRecipesController : ControllerBase
     {
@@ -21,105 +22,69 @@ namespace recipes_backend.Controllers
             _context = context;
         }
 
-        // GET: api/UserSavedRecipes
+        [HttpGet("save")]
+        public async Task<IActionResult>SaveRecipe(long recipeId, long userId)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("You must be logged in to create a recipe.");
+            }
+
+            User user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+            if (user == null)
+            {
+                return BadRequest("No user with that id");
+            }
+
+            Recipe recipe = _context.Recipes.SingleOrDefault(r => r.Id == recipeId);
+            if (recipe == null)
+            {
+                return BadRequest("No recipe with that id");
+            }
+
+            var tmp = await _context.UserSavedRecipe.SingleOrDefaultAsync(x => x.UserId == userId && x.RecipeId == recipeId);
+            if (tmp != null) 
+            {
+                return BadRequest("Already Saved");
+            }
+
+            var saveRecipe = new UserSavedRecipe
+            {
+                UserId = userId,
+                RecipeId = recipeId
+            };
+
+            _context.UserSavedRecipe.Add(saveRecipe);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserSavedRecipe>>> GetUserSavedRecipe()
+        public async Task<IActionResult>GetSavedRecipes(long userId)
         {
-          if (_context.UserSavedRecipe == null)
-          {
-              return NotFound();
-          }
-            return await _context.UserSavedRecipe.ToListAsync();
-        }
-
-        // GET: api/UserSavedRecipes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserSavedRecipe>> GetUserSavedRecipe(int id)
-        {
-          if (_context.UserSavedRecipe == null)
-          {
-              return NotFound();
-          }
-            var userSavedRecipe = await _context.UserSavedRecipe.FindAsync(id);
-
-            if (userSavedRecipe == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                return Unauthorized("You must be logged in to create a recipe.");
             }
 
-            return userSavedRecipe;
-        }
-
-        // PUT: api/UserSavedRecipes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserSavedRecipe(int id, UserSavedRecipe userSavedRecipe)
-        {
-            if (id != userSavedRecipe.Id)
+            User user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+            if (user == null)
             {
-                return BadRequest();
+                return BadRequest("No user with that id");
             }
 
-            _context.Entry(userSavedRecipe).State = EntityState.Modified;
+            var usrList = await _context.UserSavedRecipe.Where(usr => usr.UserId == userId).ToListAsync();
 
-            try
+            List<Recipe> recipes = new List<Recipe>();
+
+            foreach (var usrItem in usrList)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserSavedRecipeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                Recipe recipe = await _context.Recipes.SingleOrDefaultAsync(r => r.Id == usrItem.RecipeId);
+                recipes.Add(recipe);
             }
 
-            return NoContent();
-        }
-
-        // POST: api/UserSavedRecipes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<UserSavedRecipe>> PostUserSavedRecipe(UserSavedRecipe userSavedRecipe)
-        {
-
-          if (_context.UserSavedRecipe == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.UserSavedRecipe'  is null.");
-          }
-            _context.UserSavedRecipe.Add(userSavedRecipe);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUserSavedRecipe", new { id = userSavedRecipe.Id }, userSavedRecipe);
-        }
-
-        // DELETE: api/UserSavedRecipes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserSavedRecipe(int id)
-        {
-            if (_context.UserSavedRecipe == null)
-            {
-                return NotFound();
-            }
-            var userSavedRecipe = await _context.UserSavedRecipe.FindAsync(id);
-            if (userSavedRecipe == null)
-            {
-                return NotFound();
-            }
-
-            _context.UserSavedRecipe.Remove(userSavedRecipe);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserSavedRecipeExists(int id)
-        {
-            return (_context.UserSavedRecipe?.Any(e => e.Id == id)).GetValueOrDefault();
+            return Ok(recipes);
         }
     }
 }

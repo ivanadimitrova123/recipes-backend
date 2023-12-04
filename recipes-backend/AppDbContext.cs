@@ -40,6 +40,9 @@ namespace recipes_backend
                 .WithOne()
                 .HasForeignKey<Recipe>(u => u.PictureId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserGrades>()
+                .HasKey(ug => new { ug.UserId, ug.RecipeId });
           
             modelBuilder.Entity<UserGrades>()
                 .HasOne(ug => ug.User)
@@ -52,6 +55,9 @@ namespace recipes_backend
                 .HasForeignKey(ug => ug.RecipeId);
 
             modelBuilder.Entity<UserSavedRecipe>()
+                .HasKey(usr => new {usr.UserId, usr.RecipeId});
+
+            modelBuilder.Entity<UserSavedRecipe>()
                 .HasOne(usr => usr.User)
                 .WithMany(u => u.SavedRecepies)
                 .HasForeignKey(usr =>  usr.UserId);
@@ -61,13 +67,26 @@ namespace recipes_backend
                 .WithMany(r => r.SavedRecepies)
                 .HasForeignKey(usr => usr.RecipeId);
 
+            modelBuilder.Entity<Comment>(comment =>
+            {
+                comment.HasKey(c => c.CommentId);
+                comment.HasIndex(c => c.ParentId);
+
+                comment.HasOne(c => c.Parent)
+                    .WithMany(c => c.Children)
+                    .HasForeignKey(c => c.ParentId);
+            });
+             
+                
+
             base.OnModelCreating(modelBuilder);
         }
 
 
-        public DbSet<recipes_backend.Models.UserSavedRecipe>? UserSavedRecipe { get; set; }
+        public DbSet<UserSavedRecipe>UserSavedRecipe { get; set; }
 
 
-        public DbSet<recipes_backend.Models.UserGrades>? UserGrades { get; set; }
+        public DbSet<UserGrades>UserGrades { get; set; }
+        public DbSet<Comment>Comments { get; set; }
     }
 }

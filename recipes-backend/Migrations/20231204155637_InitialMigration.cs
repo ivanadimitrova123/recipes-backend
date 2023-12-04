@@ -112,15 +112,13 @@ namespace recipes_backend.Migrations
                 name: "UserGrades",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     RecipeId = table.Column<long>(type: "bigint", nullable: false),
                     Grade = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserGrades", x => x.Id);
+                    table.PrimaryKey("PK_UserGrades", x => new { x.UserId, x.RecipeId });
                     table.ForeignKey(
                         name: "FK_UserGrades_Recipes_RecipeId",
                         column: x => x.RecipeId,
@@ -139,14 +137,12 @@ namespace recipes_backend.Migrations
                 name: "UserSavedRecipe",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     RecipeId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserSavedRecipe", x => x.Id);
+                    table.PrimaryKey("PK_UserSavedRecipe", x => new { x.UserId, x.RecipeId });
                     table.ForeignKey(
                         name: "FK_UserSavedRecipe_Recipes_RecipeId",
                         column: x => x.RecipeId,
@@ -178,11 +174,6 @@ namespace recipes_backend.Migrations
                 column: "RecipeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGrades_UserId",
-                table: "UserGrades",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_ProfilePictureId",
                 table: "Users",
                 column: "ProfilePictureId",
@@ -192,11 +183,6 @@ namespace recipes_backend.Migrations
                 name: "IX_UserSavedRecipe_RecipeId",
                 table: "UserSavedRecipe",
                 column: "RecipeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserSavedRecipe_UserId",
-                table: "UserSavedRecipe",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserUser_FollowingId",

@@ -13,7 +13,7 @@ using recipes_backend;
 namespace recipes_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231129104324_InitialMigration")]
+    [Migration("20231204155637_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,49 +150,33 @@ namespace recipes_backend.Migrations
 
             modelBuilder.Entity("recipes_backend.Models.UserGrades", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Grade")
-                        .HasColumnType("integer");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("RecipeId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Grade")
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "RecipeId");
 
                     b.HasIndex("RecipeId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserGrades");
                 });
 
             modelBuilder.Entity("recipes_backend.Models.UserSavedRecipe", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("RecipeId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "RecipeId");
 
                     b.HasIndex("RecipeId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserSavedRecipe");
                 });

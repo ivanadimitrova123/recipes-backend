@@ -136,6 +136,13 @@ public class AccountController : ControllerBase
                 ModelState.AddModelError("Email", "Email is already in use.");
                 return BadRequest(ModelState);
             }
+
+            if (_context.Users.Any(u => u.Username == model.Username))
+            {
+                ModelState.AddModelError("Username", "Username is already in use");
+                return BadRequest(ModelState);
+            }
+
             model.ProfilePictureId = null;
             
             // Hash the user's password
@@ -154,6 +161,11 @@ public class AccountController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
+        if (model.Username.IsNullOrEmpty() || model.Password.IsNullOrEmpty()) 
+        {
+            return BadRequest("Enter Username and Password");
+        }
+
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username || u.Email == model.Username);
     
         if (user == null)
