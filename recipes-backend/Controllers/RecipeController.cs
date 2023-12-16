@@ -60,7 +60,7 @@ public class RecipeController : ControllerBase
 
 
     [HttpPost]
-    public IActionResult CreateRecipe([FromForm] Recipe recipe, IFormFile photo)
+    public IActionResult CreateRecipe([FromForm] Recipe recipe, IFormFile photo, [FromForm] List<long> selectedCategoryIds)
     {
         if (!User.Identity.IsAuthenticated)
         {
@@ -94,13 +94,21 @@ public class RecipeController : ControllerBase
         recipe.Picture = pic;
         recipe.PictureId = pic.Id;
         recipe.UserId = userId;
+        foreach (var categoryId in selectedCategoryIds)
+        {
+            var category = _context.Categories.FirstOrDefault(c => c.Id == categoryId);
+            if (category != null)
+            {
+                recipe.Categories.Add(category);
+            }
+        }
         _context.Recipes.Add(recipe);
         _context.SaveChanges();
         return CreatedAtAction("GetRecipeById", new { id = recipe.Id }, recipe);
     }
     
     [HttpPut("{id}")]
-    public IActionResult EditRecipe(long id, [FromForm] Recipe updatedRecipe,IFormFile photo)
+    public IActionResult EditRecipe(long id, [FromForm] Recipe updatedRecipe,IFormFile photo, [FromForm] List<long> selectedCategoryIds)
     {
         // Find the recipe by its ID
         var recipe = _context.Recipes.FirstOrDefault(r => r.Id == id);
@@ -141,6 +149,16 @@ public class RecipeController : ControllerBase
         recipe.PictureId = pic.Id;
         recipe.Ingredients = updatedRecipe.Ingredients;
 
+        recipe.Categories.Clear();
+        foreach (var categoryId in selectedCategoryIds)
+        {
+            var category = _context.Categories.FirstOrDefault(c => c.Id == categoryId);
+            if (category != null)
+            {
+                recipe.Categories.Add(category);
+            }
+        }
+        
         _context.SaveChanges();
 
         return Ok(recipe);

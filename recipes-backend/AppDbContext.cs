@@ -88,5 +88,7 @@ namespace recipes_backend
 
         public DbSet<UserGrades>UserGrades { get; set; }
         public DbSet<Comment>Comments { get; set; }
+        public DbSet<Category> Categories { get; set; }
+
     }
 }

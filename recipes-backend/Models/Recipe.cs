@@ -36,6 +36,9 @@ namespace recipes_backend.Models
 
         public ICollection<UserGrades> UsersGrades { get; set; } = new List<UserGrades>();
         public ICollection<UserSavedRecipe> SavedRecepies { get; set; } = new List<UserSavedRecipe>();
+        
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
+
 
     }
 }
