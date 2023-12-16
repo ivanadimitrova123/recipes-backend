@@ -26,6 +26,7 @@ public class AccountController : ControllerBase
         _passwordHasher = passwordHasher;
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpGet("allUsers")]
     public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
     {
@@ -185,6 +186,8 @@ public class AccountController : ControllerBase
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // Add the user's ID as a claim.
+            new Claim(ClaimTypes.Role, user.Role),
+
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VkVSfGYr8VSkxDRF8ftKCwZuqN1lLLxBZN7s20jS"));
@@ -199,8 +202,6 @@ public class AccountController : ControllerBase
         );
             
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-        // Return the JWT token as part of the response.
         return Ok(new { Token = tokenString, });
     }
 }

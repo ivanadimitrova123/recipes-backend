@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace recipes_backend.Models
 {
+    
     public class Recipe
     {
         [Key]

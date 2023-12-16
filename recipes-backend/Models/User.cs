@@ -25,18 +25,11 @@ public class User
     public Picture? ProfilePicture { get; set; }
     [JsonIgnore]
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
-    
-    // Users that the current user is following
     public ICollection<User> Following { get; set; } = new List<User>();
     [JsonIgnore]
-
-    // Users who are following the current user
     public ICollection<User> Followers { get; set; } = new List<User>();
-
-    //Recepies that the user has saved
-    
     public ICollection<UserSavedRecipe> SavedRecepies { get; set; } = new List<UserSavedRecipe>();
-
     public ICollection<UserGrades> UsersGrades { get; set; } = new List<UserGrades>();
-
+    
+    public string Role { get; set; } = "User";
 }

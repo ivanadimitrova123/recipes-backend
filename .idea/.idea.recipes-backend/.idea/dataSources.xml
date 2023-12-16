@@ -9,5 +9,13 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/recipeC%23?password=Ivana&amp;user=postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="recepiedb@ep-misty-mud-98256426.eu-central-1.aws.neon.tech" uuid="0d864347-78d8-4761-9bf9-22ce46088a1b">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ep-misty-mud-98256426.eu-central-1.aws.neon.tech:5432/recepiedb?password=eAm7oVJDYUy3&amp;user=proekttimski</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
