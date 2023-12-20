@@ -76,6 +76,10 @@ namespace recipes_backend
                     .WithMany(c => c.Children)
                     .HasForeignKey(c => c.ParentId);
             });
+
+            modelBuilder.Entity<ReportedComment>()
+                .HasKey(rc => new { rc.UserId, rc.CommentId });
+
              
                 
 
@@ -85,7 +89,7 @@ namespace recipes_backend
 
         public DbSet<UserSavedRecipe>UserSavedRecipe { get; set; }
 
-
+        public DbSet<ReportedComment>ReportedComments { get; set; }
         public DbSet<UserGrades>UserGrades { get; set; }
         public DbSet<Comment>Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
