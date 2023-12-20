@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ivana\\Desktop\\proba\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {}
+    "C:\\Users\\Malev\\OneDrive\\Desktop\\chefsfeed\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ivana\\Desktop\\proba\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {
+    "C:\\Users\\Malev\\OneDrive\\Desktop\\chefsfeed\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ivana\\Desktop\\proba\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
+        "projectUniqueName": "C:\\Users\\Malev\\OneDrive\\Desktop\\chefsfeed\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
         "projectName": "recipes-backend",
-        "projectPath": "C:\\Users\\ivana\\Desktop\\proba\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
-        "packagesPath": "C:\\Users\\ivana\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ivana\\Desktop\\proba\\recipes-backend\\recipes-backend\\obj\\",
+        "projectPath": "C:\\Users\\Malev\\OneDrive\\Desktop\\chefsfeed\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
+        "packagesPath": "C:\\Users\\Malev\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Malev\\OneDrive\\Desktop\\chefsfeed\\recipes-backend\\recipes-backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ivana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Malev\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -93,10 +93,29 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.25, 6.0.25]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.25, 6.0.25]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.25, 6.0.25]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.25, 6.0.25]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -105,7 +124,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
