@@ -19,7 +19,7 @@ namespace recipes_backend.Models
 
         [Required]
         public string Content { get; set; }
-        public DateTimeOffset DateCreated {  get; set; } = DateTimeOffset.Now;
+        public DateTime DateCreated {  get; set; } = DateTime.Now.ToUniversalTime();
         public Comment? Parent { get; set; }
         public ICollection<Comment>? Children { get; set;}
     }

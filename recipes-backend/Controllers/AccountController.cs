@@ -40,6 +40,8 @@ public class AccountController : ControllerBase
     {
         // Retrieve the user's profile by their user ID
         var userProfile = _context.Users
+            .Include(u => u.Following)
+            .Include(u => u.Followers)
             .Include(u=>u.Recipes)
             .Include(u => u.ProfilePicture)
             .FirstOrDefault(u => u.Id == userId);
@@ -56,7 +58,6 @@ public class AccountController : ControllerBase
             FirstName = userProfile.FirstName,
             LastName = userProfile.LastName,
             userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{userProfile.ProfilePictureId}",
-            //Recipes = userProfile.Recipes
             Recipes = userProfile.Recipes.Select(recipe => new
             {   
                 recipe.Id,
@@ -64,7 +65,9 @@ public class AccountController : ControllerBase
                 recipe.PictureId,
                 RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}"
 
-            }).ToList()
+            }).ToList(),
+            Following=userProfile.Following.Count,
+            Followers=userProfile.Followers.Count
         };
 
         var image = _context.Pictures.Find(userProfile.ProfilePictureId);
@@ -86,6 +89,8 @@ public class AccountController : ControllerBase
         if (long.TryParse(userIdClaim.Value, out long userId))
         {
             var user = _context.Users
+                .Include(u => u.Following)
+                .Include(u => u.Followers)
                 .Include(u => u.ProfilePicture) 
                 .Include(u => u.Recipes)
                 .FirstOrDefault(u => u.Id == userId);
@@ -117,7 +122,9 @@ public class AccountController : ControllerBase
                         recipe.PictureId,
                         RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}"
 
-                    }).ToList()
+                    }).ToList(),
+                    Following=user.Following.Count,
+                    Followers=user.Followers.Count
                 };
                 
                return Ok(userData);

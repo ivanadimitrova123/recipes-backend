@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using recipes_backend;
@@ -12,9 +13,10 @@ using recipes_backend;
 namespace recipes_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231216142444_AddCategory")]
+    partial class AddCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +44,7 @@ namespace recipes_backend.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("recipes_backend.Models.Comment", b =>
@@ -57,7 +59,7 @@ namespace recipes_backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DateCreated")
+                    b.Property<DateTimeOffset>("DateCreated")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("ParentId")
@@ -162,21 +164,6 @@ namespace recipes_backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
-                });
-
-            modelBuilder.Entity("recipes_backend.Models.ReportedComment", b =>
-                {
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("CommentId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("UserId", "CommentId");
-
-                    b.HasIndex("CommentId");
-
-                    b.ToTable("ReportedComments");
                 });
 
             modelBuilder.Entity("recipes_backend.Models.User", b =>
@@ -316,25 +303,6 @@ namespace recipes_backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Picture");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("recipes_backend.Models.ReportedComment", b =>
-                {
-                    b.HasOne("recipes_backend.Models.Comment", "Comment")
-                        .WithMany()
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("recipes_backend.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
 
                     b.Navigation("User");
                 });

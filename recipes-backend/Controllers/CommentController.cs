@@ -19,12 +19,12 @@ namespace recipes_backend.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult>GetCommentsForRecipe(long recipeId)
+        public async Task<IActionResult>GetCommentsForRecipe(long id)
         {
             var recipe = _context.Recipes
             .Include(r => r.Picture)
             .Include(r => r.User)
-            .FirstOrDefault(r => r.Id == recipeId);
+            .FirstOrDefault(r => r.Id == id);
 
             if (recipe == null)
             {
@@ -32,7 +32,7 @@ namespace recipes_backend.Controllers
             }
 
             List<Comment> comments = await _context.Comments
-                .Where(c => c.RecipeId == recipeId)
+                .Where(c => c.RecipeId == id)
                 .AsNoTrackingWithIdentityResolution()
                 .Include(c => c.Children)
                 .ToListAsync();
@@ -56,7 +56,7 @@ namespace recipes_backend.Controllers
             }
             return BadRequest("Error with creating comment");
         }
-
+        
         [HttpDelete("{commentId}")]
         public async Task<IActionResult> DeleteComment(int commentId)
         {
