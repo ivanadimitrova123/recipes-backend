@@ -56,7 +56,7 @@ namespace recipes_backend.Controllers
             }
             return BadRequest("Error with creating comment");
         }
-
+        
         [HttpDelete("{commentId}")]
         public async Task<IActionResult> DeleteComment(int commentId)
         {
