@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "QTfdPW7QHya19zjaY8uAG26dOWJv0CFLJKpjNG4RK4E=",
+  "Hash": "NLJy4+7HV0/tDHfReQcOHlOiTtYXXGYvHPVku/YdXq4=",
   "Source": "recipes-backend",
   "BasePath": "_content/recipes-backend",
   "Mode": "Default",
@@ -18,6 +18,8 @@
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",

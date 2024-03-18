@@ -51,13 +51,16 @@ public class AccountController : ControllerBase
             return NotFound("User not found.");
         }
         // Create an anonymous object to send only the necessary data
+        string userImage = null;
+        if (userProfile.ProfilePictureId != null) { userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{userProfile.ProfilePictureId}"; }
         var userData = new
         {
             Id = userProfile.Id,
             Username = userProfile.Username,
             FirstName = userProfile.FirstName,
             LastName = userProfile.LastName,
-            userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{userProfile.ProfilePictureId}",
+            imageId = userProfile.ProfilePictureId,
+            userImage = userImage,
             Recipes = userProfile.Recipes.Select(recipe => new
             {   
                 recipe.Id,
@@ -152,7 +155,6 @@ public class AccountController : ControllerBase
             }
 
             model.ProfilePictureId = null;
-            
             // Hash the user's password
             model.Password = _passwordHasher.HashPassword(model, model.Password);
 
@@ -181,7 +183,7 @@ public class AccountController : ControllerBase
             return BadRequest("Invalid username or password.");
         }
 
-        // Check if the password matches (You should use a secure password hashing method).
+        
         var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
 
         if (passwordVerificationResult != PasswordVerificationResult.Success)
@@ -189,10 +191,10 @@ public class AccountController : ControllerBase
             return BadRequest("Invalid username or password.");
         }
 
-        // Generate the JWT token.
+        
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // Add the user's ID as a claim.
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
             new Claim(ClaimTypes.Role, user.Role),
 
         };
@@ -204,11 +206,13 @@ public class AccountController : ControllerBase
             issuer: "https://localhost:7222/",
             audience: "https://localhost:7222/",
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30), // Set token expiration time.
+            expires: DateTime.Now.AddMinutes(30), 
             signingCredentials: creds
         );
+
+         
             
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-        return Ok(new { Token = tokenString, });
+        return Ok(new { User = user, Token = tokenString, });
     }
 }

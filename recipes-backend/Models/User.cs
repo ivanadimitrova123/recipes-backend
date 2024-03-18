@@ -22,7 +22,7 @@ public class User
     [ForeignKey("PictureId")]
     public long? ProfilePictureId { get; set; }
     [JsonIgnore]
-    public Picture? ProfilePicture { get; set; }
+    public Picture? ProfilePicture { get; set; } 
     [JsonIgnore]
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
     public ICollection<User> Following { get; set; } = new List<User>();
