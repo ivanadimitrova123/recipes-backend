@@ -161,6 +161,13 @@ public class RecipeController : ControllerBase
         recipe.Description = updatedRecipe.Description;
        
         recipe.Ingredients = updatedRecipe.Ingredients;
+        recipe.Level = updatedRecipe.Level;
+        recipe.Cook = updatedRecipe.Cook;
+        recipe.Prep = updatedRecipe.Prep;
+        recipe.Total = updatedRecipe.Total;
+        recipe.Yield = updatedRecipe.Yield;
+
+
 
         recipe.Categories.Clear();
         foreach (var categoryId in selectedCategoryIds)

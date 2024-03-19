@@ -80,7 +80,7 @@ public class AccountController : ControllerBase
 
     
     [HttpGet("current")]
-    [Authorize]
+   
     public IActionResult GetCurrentUserInfo()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -208,7 +208,7 @@ public class AccountController : ControllerBase
             issuer: "https://localhost:7222/",
             audience: "https://localhost:7222/",
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30), 
+            expires: DateTime.Now.AddDays(7), 
             signingCredentials: creds
         );
 
