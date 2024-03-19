@@ -97,11 +97,11 @@ public class AccountController : ControllerBase
                 .Include(u => u.ProfilePicture) 
                 .Include(u => u.Recipes)
                 .FirstOrDefault(u => u.Id == userId);
-
+            /*
             if (user.ProfilePictureId == null)
             {
                 user.ProfilePictureId = 1;
-            }
+            }*/
 
             if (user != null)
             {
@@ -113,10 +113,12 @@ public class AccountController : ControllerBase
                     user.FirstName,
                     user.LastName,
                     user.ProfilePictureId,
+                    /*
                     ProfilePicture = new
                     {
                         user.ProfilePictureId
                     },
+                    */
                     UserImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{user.ProfilePictureId}",
                     Recipes = user.Recipes.Select(recipe => new
                     {   

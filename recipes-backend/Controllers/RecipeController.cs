@@ -50,12 +50,15 @@ public class RecipeController : ControllerBase
             .Include(r=>r.User)
             .FirstOrDefault(r => r.Id == id);
 
+
         if (recipe == null)
         {
             return NotFound("Recipe not found");
         }
 
-        return Ok(recipe);
+        string image = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.User.ProfilePictureId}";
+
+        return Ok(new { Recipe = recipe, recipeUserImage = image });
     }
 
 
@@ -108,7 +111,7 @@ public class RecipeController : ControllerBase
     }
     
     [HttpPut("{id}")]
-    public IActionResult EditRecipe(long id, [FromForm] Recipe updatedRecipe,IFormFile photo, [FromForm] List<long> selectedCategoryIds)
+    public IActionResult EditRecipe(long id, [FromForm] Recipe updatedRecipe,IFormFile? photo, [FromForm] List<long> selectedCategoryIds)
     {
         // Find the recipe by its ID
         var recipe = _context.Recipes.FirstOrDefault(r => r.Id == id);
@@ -123,30 +126,40 @@ public class RecipeController : ControllerBase
         {
             return Forbid("You are not authorized to edit this recipe.");
         }
-        byte[] photoData = null;
-        string photoContentType = null;
-        
-        if (photo != null && photo.Length > 0)
+
+        if(photo != null)
         {
-            using (var memoryStream = new MemoryStream())
+            Picture pic = new Picture();
+
+            byte[] photoData = null;
+            string photoContentType = null;
+
+            if (photo != null && photo.Length > 0)
             {
-                photo.CopyTo(memoryStream);
-                photoData = memoryStream.ToArray();
-                photoContentType = photo.ContentType;
+                using (var memoryStream = new MemoryStream())
+                {
+                    photo.CopyTo(memoryStream);
+                    photoData = memoryStream.ToArray();
+                    photoContentType = photo.ContentType;
+                }
+                pic.ImageData = photoData;
+                pic.ContentType = photoContentType;
+                pic.FileName = "";
+                _context.Pictures.Add(pic);
+                _context.SaveChanges();
+                pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{pic.Id}";
+                recipe.Picture = pic;
+                recipe.PictureId = pic.Id;
             }
         }
-        Picture pic = new Picture();
-        pic.ImageData = photoData;
-        pic.ContentType = photoContentType;
-        pic.FileName = "";
-        _context.Pictures.Add(pic);
-        _context.SaveChanges();
-        pic.FileName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{pic.Id}";
+
+        
+        
+        
         // Update the recipe properties
         recipe.Name = updatedRecipe.Name;
         recipe.Description = updatedRecipe.Description;
-        recipe.Picture = pic;
-        recipe.PictureId = pic.Id;
+       
         recipe.Ingredients = updatedRecipe.Ingredients;
 
         recipe.Categories.Clear();

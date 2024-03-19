@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 [Route("api/follow")]
 [ApiController]
-[Authorize]
 public class FollowController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -14,6 +13,27 @@ public class FollowController : ControllerBase
     public FollowController(ApplicationDbContext context)
     {
         _context = context;
+    }
+
+    [HttpGet("status/{followedUserId}")]
+    public IActionResult IsFollowed(long followedUserId)
+    {
+        
+        var userId = GetUserId();
+        var user = _context.Users
+            .Include(u => u.Followers)
+            .Include(u => u.Following)
+            .FirstOrDefault(u => u.Id == userId);
+
+
+        foreach (var u in user.Following)
+        {
+            if(u.Id == followedUserId)
+            {
+                return Ok(true);
+            }
+        }
+        return Ok(false);
     }
 
     [HttpPost("{followedUserId}")]
