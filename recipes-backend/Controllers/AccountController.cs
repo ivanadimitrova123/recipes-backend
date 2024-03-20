@@ -66,7 +66,8 @@ public class AccountController : ControllerBase
                 recipe.Id,
                 recipe.Name,
                 recipe.PictureId,
-                RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}"
+                RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}",
+                recipe.Rating
 
             }).ToList(),
             Following=userProfile.Following.Count,
@@ -94,10 +95,13 @@ public class AccountController : ControllerBase
             var user = _context.Users
                 .Include(u => u.Following)
                 .Include(u => u.Followers)
-                .Include(u => u.ProfilePicture) 
+                .Include(u => u.ProfilePicture)
                 .Include(u => u.Recipes)
                 .FirstOrDefault(u => u.Id == userId);
+
+
             /*
+             * 
             if (user.ProfilePictureId == null)
             {
                 user.ProfilePictureId = 1;
@@ -125,7 +129,9 @@ public class AccountController : ControllerBase
                         recipe.Id,
                         recipe.Name,
                         recipe.PictureId,
-                        RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}"
+                        RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}",
+                        recipe.Rating
+
 
                     }).ToList(),
                     Following=user.Following.Count,

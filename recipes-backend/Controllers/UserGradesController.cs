@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +25,10 @@ namespace recipes_backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GradeRecipe(long recipeId,  long userId, int grade)
+        public async Task<IActionResult> GradeRecipe([FromForm] long userId, [FromForm] long recipeId, [FromForm] int grade)
         {
-
+            var test = userId;
+            
             if (!User.Identity.IsAuthenticated)
             {
                 return Unauthorized("You must be logged in to create a recipe.");
@@ -43,15 +46,26 @@ namespace recipes_backend.Controllers
                 return BadRequest("No recipe with that id");
             }
 
-            var userGrade = new UserGrades
+            UserGrades userGrades = _context.UserGrades.SingleOrDefault(ug => ug.UserId == userId && ug.RecipeId == recipeId);
+            if (userGrades == null)
             {
-                UserId = userId,
-                RecipeId = recipeId,
-                Grade = grade
-            };
+                var userGrade = new UserGrades
+                {
+                    UserId = userId,
+                    RecipeId = recipeId,
+                    Grade = grade
+                };
 
-            _context.UserGrades.Add(userGrade);
-            await _context.SaveChangesAsync();
+                _context.UserGrades.Add(userGrade);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                userGrades.Grade = grade;
+                await _context.SaveChangesAsync();
+            }
+
+    
 
             List<UserGrades> ug = await _context.UserGrades.Where(ug => ug.RecipeId == recipeId).ToListAsync();
             int sum = 0;
@@ -61,6 +75,7 @@ namespace recipes_backend.Controllers
             }
             recipe.Rating = (float)sum / ug.Count;
             await _context.SaveChangesAsync();
+            
             return Ok();
 
         }
@@ -85,14 +100,16 @@ namespace recipes_backend.Controllers
                 return BadRequest("No recipe with that id");
             }
 
+            int reviews = await _context.UserGrades.Where(ug => ug.RecipeId == recipeId).CountAsync();
+
             UserGrades ug = await _context.UserGrades.SingleOrDefaultAsync(ug => ug.UserId == userId && ug.RecipeId == recipeId);
 
             if(ug == null)
             {
-                return BadRequest("User has not graded this recipe");
+                return Ok(0);
             }
 
-            return Ok(ug.Grade);
+            return Ok(new { ug.Grade, reviews });
 
         }
 
