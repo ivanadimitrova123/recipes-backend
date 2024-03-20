@@ -22,8 +22,8 @@ namespace recipes_backend.Controllers
             _context = context;
         }
 
-        [HttpGet("save")]
-        public async Task<IActionResult>SaveRecipe(long recipeId, long userId)
+        [HttpPost]
+        public async Task<IActionResult>SaveRecipe([FromForm]long recipeId,[FromForm] long userId)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -45,7 +45,7 @@ namespace recipes_backend.Controllers
             var tmp = await _context.UserSavedRecipe.SingleOrDefaultAsync(x => x.UserId == userId && x.RecipeId == recipeId);
             if (tmp != null) 
             {
-                return BadRequest("Already Saved");
+                return Ok("Already Saved");
             }
 
             var saveRecipe = new UserSavedRecipe
