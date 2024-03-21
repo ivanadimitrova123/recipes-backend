@@ -61,6 +61,13 @@ public class RecipeController : ControllerBase
         return Ok(new { Recipe = recipe, recipeUserImage = image });
     }
 
+    [HttpGet("search")]
+    public IActionResult SearchRecipe(String text)
+    {
+        var recipe = _context.Recipes.Include(r => r.Picture).Where(r => r.Name.Contains(text)).Take(5).ToList();
+        return Ok(recipe);
+    }
+
 
     [HttpPost]
     public IActionResult CreateRecipe([FromForm] Recipe recipe, IFormFile photo, [FromForm] List<long> selectedCategoryIds)

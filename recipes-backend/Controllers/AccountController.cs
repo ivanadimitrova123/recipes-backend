@@ -34,6 +34,13 @@ public class AccountController : ControllerBase
         return users;
     }
 
+    [HttpGet("search")]
+    public IActionResult SearchUser(string text)
+    {
+        var users = _context.Users.Where(u => u.Username.Contains(text)).Take(5).ToList();
+        return Ok(users);
+    }
+
     
     [HttpGet("user/{userId}")]
     public IActionResult GetUserProfile(long userId)
