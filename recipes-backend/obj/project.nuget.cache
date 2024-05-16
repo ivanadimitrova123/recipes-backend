@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZQ6yF8F0tr1vriaif2ofgyr5/Wxd+Rxju5vrT0+iQ2qcoM9j2FoSMWPwUragoujOKsUV+4ZjHpmwLLRslfAEPA==",
+  "dgSpecHash": "O0GQDm221Mhv+6Z7iYsRTJsIVGXjaTOU2RBX1wZ2GL9UEz76n0CTSTNJxCpxbcdNBST6vh8aLsoIOyYrSEABcA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Nace\\Desktop\\TIMSKI\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
+  "projectFilePath": "C:\\Users\\Nace\\Desktop\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nace\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\Nace\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
@@ -249,16 +249,6 @@
       "level": "Warning",
       "warningLevel": 1,
       "message": "Package 'System.IdentityModel.Tokens.Jwt' 6.23.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52",
-      "libraryId": "System.IdentityModel.Tokens.Jwt",
-      "targetGraphs": [
-        "net6.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'System.IdentityModel.Tokens.Jwt' 6.23.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-8g9c-28fc-mcx2",
       "libraryId": "System.IdentityModel.Tokens.Jwt",
       "targetGraphs": [
         "net6.0"

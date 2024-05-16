@@ -7,6 +7,7 @@ using recipes_backend.Models;
 namespace recipes_backend.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using recipes_backend.Models.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -21,6 +22,25 @@ public class RecipeController : ControllerBase
     {
         _context = context;
     }
+
+    [HttpGet("popular")]
+    public IActionResult GetPopularRecipes()
+    {
+        
+      
+
+        // Fetch recipes created by the user with the matching user ID
+        var recipes = _context.Recipes.Include(r => r.User).Take(7).ToList();
+        List<object> editedRecipes = new List<object>();
+        foreach (var recipe in recipes)
+        {
+            string img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}";
+            editedRecipes.Add(new { recipe.Id, recipe.Name, img, recipe.Total, recipe.Level, recipe.User.Username });
+        }
+
+        return Ok(editedRecipes);
+    }
+
 
     [HttpGet]
     public IActionResult GetRecipes()
@@ -56,6 +76,9 @@ public class RecipeController : ControllerBase
             return NotFound("Recipe not found");
         }
 
+        List<String>ingridients =  recipe.Ingredients[0].Replace("\r","").Split("\n").ToList();
+        recipe.Ingredients = ingridients;
+
         string image = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.User.ProfilePictureId}";
 
         return Ok(new { Recipe = recipe, recipeUserImage = image });
@@ -64,8 +87,14 @@ public class RecipeController : ControllerBase
     [HttpGet("search")]
     public IActionResult SearchRecipe(String text)
     {
-        var recipe = _context.Recipes.Include(r => r.Picture).Where(r => r.Name.Contains(text)).Take(5).ToList();
-        return Ok(recipe);
+        List<SearchRecipeDto> recipeDtos = new List<SearchRecipeDto>();
+        var recipes = _context.Recipes.Include(r => r.Picture).Where(r => r.Name.Contains(text)).Take(3).ToList();
+        foreach(var recipe in recipes)
+        {
+            string img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}";
+            recipeDtos.Add(new SearchRecipeDto(recipe.Id, recipe.Name, img));
+        }
+        return Ok(recipeDtos);
     }
 
 
@@ -114,7 +143,7 @@ public class RecipeController : ControllerBase
         }
         _context.Recipes.Add(recipe);
         _context.SaveChanges();
-        return CreatedAtAction("GetRecipeById", new { id = recipe.Id }, recipe);
+        return Ok();
     }
     
     [HttpPut("{id}")]
@@ -129,12 +158,16 @@ public class RecipeController : ControllerBase
         }
 
         // Check if the user is authorized to edit the recipe
-        if (recipe.UserId != GetUserIdFromClaims())
+        User user = _context.Users.FirstOrDefault(u => u.Id == GetUserIdFromClaims());
+        if (user.Role != "Admin") 
         {
-            return Forbid("You are not authorized to edit this recipe.");
+            if (recipe.UserId != GetUserIdFromClaims())
+            {
+                return Forbid("You are not authorized to edit this recipe.");
+            }
         }
 
-        if(photo != null)
+        if (photo != null)
         {
             Picture pic = new Picture();
 
@@ -203,10 +236,15 @@ public class RecipeController : ControllerBase
         }
 
         // Check if the user is authorized to delete the recipe
-        if (recipe.UserId != GetUserIdFromClaims())
+        User user = _context.Users.FirstOrDefault(u => u.Id == GetUserIdFromClaims());
+        if(user.Role != "Admin")
         {
-            return Forbid("You are not authorized to delete this recipe.");
+            if (recipe.UserId != GetUserIdFromClaims())
+            {
+                return Forbid("You are not authorized to delete this recipe.");
+            }
         }
+      
         
        
         Picture i = _context.Pictures.FirstOrDefault(i => i.Id == recipe.PictureId);

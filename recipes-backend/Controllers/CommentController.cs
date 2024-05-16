@@ -35,14 +35,28 @@ namespace recipes_backend.Controllers
                 .Where(c => c.RecipeId == id)
                 .AsNoTrackingWithIdentityResolution()
                 .Include(c => c.Children)
+                .Include(c => c.User)
                 .ToListAsync();
 
-            List<Comment> rootComments = comments
-                .Where(c => c.ParentId == null)
-                .AsParallel()
-                .ToList();
+            List<object> editedComments = new List<object>();
+            foreach (var comment in comments) {
+                string userImage = "";
+                if(comment.User.ProfilePictureId != null)
+                {
+                    userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{comment.User.ProfilePictureId}";
+                }
+                editedComments.Add(new
+                {
+                    comment.CommentId,
+                    comment.User.Username,
+                    userImage,
+                    comment.Content,
+                  
+                });
+            }
+          
 
-            return Ok(rootComments);
+            return Ok(editedComments);
         }
 
         [HttpPost]

@@ -79,7 +79,8 @@ namespace recipes_backend
 
             modelBuilder.Entity<ReportedComment>()
                 .HasKey(rc => new { rc.UserId, rc.CommentId });
-
+            modelBuilder.Entity<ReportedRecipe>()
+                .HasKey(rr => new {rr.UserId, rr.RecipeId});
              
                 
 
@@ -90,6 +91,7 @@ namespace recipes_backend
         public DbSet<UserSavedRecipe>UserSavedRecipe { get; set; }
 
         public DbSet<ReportedComment>ReportedComments { get; set; }
+        public DbSet<ReportedRecipe>ReportedRecipes { get; set; }
         public DbSet<UserGrades>UserGrades { get; set; }
         public DbSet<Comment>Comments { get; set; }
         public DbSet<Category> Categories { get; set; }

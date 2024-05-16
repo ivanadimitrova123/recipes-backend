@@ -8,6 +8,7 @@ using recipes_backend.Models;
 using System.Linq;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using recipes_backend.Models.Dto;
 
 
 namespace recipes_backend.Controllers;
@@ -37,8 +38,16 @@ public class AccountController : ControllerBase
     [HttpGet("search")]
     public IActionResult SearchUser(string text)
     {
-        var users = _context.Users.Where(u => u.Username.Contains(text)).Take(5).ToList();
-        return Ok(users);
+        var users = _context.Users.Where(u => u.Username.Contains(text)).Take(3).ToList();
+        List<UserDto> userDtos = new List<UserDto>();
+        foreach (var user in users)
+        {
+            string img = "";
+            if (user.ProfilePictureId != null)
+                img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{user.ProfilePictureId}";
+            userDtos.Add(new UserDto(user.Id, user.Username,user.FirstName,user.LastName,user.Email,img,user.Role));
+        }
+        return Ok(userDtos);
     }
 
     
@@ -74,6 +83,7 @@ public class AccountController : ControllerBase
                 recipe.Name,
                 recipe.PictureId,
                 RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}",
+                Comments = _context.Comments.Where(c => c.RecipeId == recipe.Id).Count(),
                 recipe.Rating
 
             }).ToList(),
@@ -81,7 +91,7 @@ public class AccountController : ControllerBase
             Followers=userProfile.Followers.Count
         };
 
-        var image = _context.Pictures.Find(userProfile.ProfilePictureId);
+        
 
         return Ok(userData);
     }
@@ -224,10 +234,12 @@ public class AccountController : ControllerBase
             expires: DateTime.Now.AddDays(7), 
             signingCredentials: creds
         );
-
-         
+        string img = "";
+        if (user.ProfilePictureId != null)
+            img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{user.ProfilePictureId}";
+        UserDto userDto = new UserDto(user.Id, user.Username, user.FirstName, user.LastName, user.Email, img, user.Role);
             
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-        return Ok(new { User = user, Token = tokenString, });
+        return Ok(new { User = userDto, Token = tokenString, });
     }
 }

@@ -76,13 +76,28 @@ namespace recipes_backend.Controllers
 
             var usrList = await _context.UserSavedRecipe.Where(usr => usr.UserId == userId).ToListAsync();
 
-            List<Recipe> recipes = new List<Recipe>();
+            List<object> recipes = new List<object>();
 
             foreach (var usrItem in usrList)
             {
-                Recipe recipe = await _context.Recipes.SingleOrDefaultAsync(r => r.Id == usrItem.RecipeId);
-                recipes.Add(recipe);
+                Recipe recipe = await _context.Recipes.Include(r=>r.User).SingleOrDefaultAsync(r => r.Id == usrItem.RecipeId);
+                string userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.User.ProfilePictureId}";
+                recipes.Add(new
+                {
+                    recipe = new
+                    {
+                        recipe.Id,
+                        recipe.Name,
+                        recipe.PictureId,
+                        RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}",
+                        Comments = _context.Comments.Where(c => c.RecipeId == recipe.Id).Count(),
+                        recipe.Rating
+                    },
+                    user = new { userImage, recipe.User.Username, }
+                });
             }
+
+            
 
             return Ok(recipes);
         }

@@ -1364,3 +1364,4 @@ C:\Users\Nace\Desktop\TIMSKI\recipes-backend\recipes-backend\obj\Debug\net6.0\re
 C:\Users\Nace\Desktop\TIMSKI\recipes-backend\recipes-backend\obj\Debug\net6.0\recipes-backend.pdb
 C:\Users\Nace\Desktop\TIMSKI\recipes-backend\recipes-backend\obj\Debug\net6.0\recipes-backend.genruntimeconfig.cache
 C:\Users\Nace\Desktop\TIMSKI\recipes-backend\recipes-backend\obj\Debug\net6.0\ref\recipes-backend.dll
+C:\Users\Nace\Desktop\recipes-backend\recipes-backend\obj\Debug\net6.0\recipes-backend.sourcelink.json
