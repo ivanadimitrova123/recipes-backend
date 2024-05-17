@@ -41,8 +41,60 @@ namespace recipes_backend
                 .HasForeignKey<Recipe>(u => u.PictureId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<UserGrades>()
+                .HasKey(ug => new { ug.UserId, ug.RecipeId });
+          
+            modelBuilder.Entity<UserGrades>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.UsersGrades)
+                .HasForeignKey(ug =>  ug.UserId);
+
+            modelBuilder.Entity<UserGrades>()
+                .HasOne(ug => ug.Recipe)
+                .WithMany(r => r.UsersGrades)
+                .HasForeignKey(ug => ug.RecipeId);
+
+            modelBuilder.Entity<UserSavedRecipe>()
+                .HasKey(usr => new {usr.UserId, usr.RecipeId});
+
+            modelBuilder.Entity<UserSavedRecipe>()
+                .HasOne(usr => usr.User)
+                .WithMany(u => u.SavedRecepies)
+                .HasForeignKey(usr =>  usr.UserId);
+
+            modelBuilder.Entity<UserSavedRecipe>()
+                .HasOne(usr => usr.Recipe)
+                .WithMany(r => r.SavedRecepies)
+                .HasForeignKey(usr => usr.RecipeId);
+
+            modelBuilder.Entity<Comment>(comment =>
+            {
+                comment.HasKey(c => c.CommentId);
+                comment.HasIndex(c => c.ParentId);
+
+                comment.HasOne(c => c.Parent)
+                    .WithMany(c => c.Children)
+                    .HasForeignKey(c => c.ParentId);
+            });
+
+            modelBuilder.Entity<ReportedComment>()
+                .HasKey(rc => new { rc.UserId, rc.CommentId });
+            modelBuilder.Entity<ReportedRecipe>()
+                .HasKey(rr => new {rr.UserId, rr.RecipeId});
+             
+                
 
             base.OnModelCreating(modelBuilder);
         }
+
+
+        public DbSet<UserSavedRecipe>UserSavedRecipe { get; set; }
+
+        public DbSet<ReportedComment>ReportedComments { get; set; }
+        public DbSet<ReportedRecipe>ReportedRecipes { get; set; }
+        public DbSet<UserGrades>UserGrades { get; set; }
+        public DbSet<Comment>Comments { get; set; }
+        public DbSet<Category> Categories { get; set; }
+
     }
 }

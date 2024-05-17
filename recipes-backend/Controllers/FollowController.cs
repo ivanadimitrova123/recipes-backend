@@ -3,10 +3,10 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using recipes_backend.Models.Dto;
 
 [Route("api/follow")]
 [ApiController]
-[Authorize]
 public class FollowController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -14,6 +14,27 @@ public class FollowController : ControllerBase
     public FollowController(ApplicationDbContext context)
     {
         _context = context;
+    }
+
+    [HttpGet("status/{followedUserId}")]
+    public IActionResult IsFollowed(long followedUserId)
+    {
+        
+        var userId = GetUserId();
+        var user = _context.Users
+            .Include(u => u.Followers)
+            .Include(u => u.Following)
+            .FirstOrDefault(u => u.Id == userId);
+
+
+        foreach (var u in user.Following)
+        {
+            if(u.Id == followedUserId)
+            {
+                return Ok(true);
+            }
+        }
+        return Ok(false);
     }
 
     [HttpPost("{followedUserId}")]
@@ -107,7 +128,15 @@ public class FollowController : ControllerBase
 
         // Retrieve the users that the current user is following
         var followingUsers = user.Following.ToList();
-        return Ok(followingUsers);
+        List<UserDto>users = new List<UserDto>();
+        foreach(var u in followingUsers)
+        {
+            string img = "";
+            if (u.ProfilePictureId != null)
+                img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{u.ProfilePictureId}";
+            users.Add(new UserDto(u.Id, u.Username, u.FirstName, u.LastName, u.Email, img, u.Role));
+        }
+        return Ok(users);
     }
 
     [HttpGet("recipes")]
@@ -133,15 +162,25 @@ public class FollowController : ControllerBase
         {
             foreach (var recipe in followedUser.Recipes)
             {
-                var followedUserImage = _context.Pictures.Find(followedUser.ProfilePictureId);
-                var recipeImage = _context.Pictures.Find(recipe.PictureId);
+                //var followedUserImage = _context.Pictures.Find(followedUser.ProfilePictureId);
+                //var recipeImage = _context.Pictures.Find(recipe.PictureId);
 
                 // Add the recipe and its associated user's image to the list
+                string userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{followedUser.ProfilePictureId}";
                 recipesWithImages.Add(new
                 {
-                    recipe = recipe,
-                    userImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{followedUserImage.Id}",
-                    recipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipeImage.Id}"
+                    recipe = new
+                    {
+                        recipe.Id,
+                        recipe.Name,
+                        recipe.PictureId,
+                        RecipeImage = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.PictureId}",
+                        Comments = _context.Comments.Where(c => c.RecipeId == recipe.Id).Count(),
+                        recipe.Rating
+                    },
+                    user = new {userImage,followedUser.Username, }
+                  
+                    
                 });
             }
         }
