@@ -72,5 +72,20 @@ namespace recipes_backend.Controllers
 
             return Ok("Recipe Reported");
         }
+
+
+        [HttpDelete("{recipeId}")]
+        public async Task<IActionResult> AllowReportedComment(long recipeId)
+        {
+            var recipe = await _context.ReportedRecipes.FirstOrDefaultAsync(c => c.RecipeId == recipeId);
+            if (recipe == null)
+            {
+                return BadRequest("Comment does not exist");
+            }
+
+            _context.ReportedRecipes.Remove(recipe);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
