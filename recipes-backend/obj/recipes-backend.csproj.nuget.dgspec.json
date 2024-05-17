@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Nace\\Desktop\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {}
+    "C:\\Users\\Nace\\Desktop\\TIMSKI\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Nace\\Desktop\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {
+    "C:\\Users\\Nace\\Desktop\\TIMSKI\\recipes-backend\\recipes-backend\\recipes-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Nace\\Desktop\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
+        "projectUniqueName": "C:\\Users\\Nace\\Desktop\\TIMSKI\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
         "projectName": "recipes-backend",
-        "projectPath": "C:\\Users\\Nace\\Desktop\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
+        "projectPath": "C:\\Users\\Nace\\Desktop\\TIMSKI\\recipes-backend\\recipes-backend\\recipes-backend.csproj",
         "packagesPath": "C:\\Users\\Nace\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Nace\\Desktop\\recipes-backend\\recipes-backend\\obj\\",
+        "outputPath": "C:\\Users\\Nace\\Desktop\\TIMSKI\\recipes-backend\\recipes-backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Nace\\AppData\\Roaming\\NuGet\\NuGet.Config",

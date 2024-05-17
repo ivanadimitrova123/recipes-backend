@@ -15,6 +15,11 @@ namespace recipes_backend
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+
+                    webBuilder.UseKestrel(options =>
+                    {
+                        options.ListenAnyIP(7222);
+                    });
                 });
     }
 }
