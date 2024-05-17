@@ -22,22 +22,27 @@ namespace recipes_backend.Controllers
         {
             var allReportedRecipes = _context.ReportedRecipes.Include(r=>r.Recipe).ToList();
             List<object>reprtedRecipes = new List<object>();
+            List<long>recipeIds = new List<long>();
             foreach (var recipe in allReportedRecipes)
             {
-                string img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.Recipe.PictureId}";
-                reprtedRecipes.Add(new
+                if(!recipeIds.Contains(recipe.RecipeId))
                 {
-                    recipe.RecipeId,
-                    recipe.Recipe.Name,
-                    img,
-                });
+                    string img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.Recipe.PictureId}";
+                    reprtedRecipes.Add(new
+                    {
+                        recipe.RecipeId,
+                        recipe.Recipe.Name,
+                        img,
+                    });
+                }
+               
             }
 
             return Ok(reprtedRecipes);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReportComment([FromForm] long userId, [FromForm] long recipeId)
+        public async Task<IActionResult> ReportRecipe([FromForm] long userId, [FromForm] long recipeId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
@@ -75,12 +80,12 @@ namespace recipes_backend.Controllers
 
 
         [HttpDelete("{recipeId}")]
-        public async Task<IActionResult> AllowReportedComment(long recipeId)
+        public async Task<IActionResult> AllowReportedRecipe(long recipeId)
         {
             var recipe = await _context.ReportedRecipes.FirstOrDefaultAsync(c => c.RecipeId == recipeId);
             if (recipe == null)
             {
-                return BadRequest("Comment does not exist");
+                return BadRequest("Recipe does not exist");
             }
 
             _context.ReportedRecipes.Remove(recipe);
