@@ -65,7 +65,7 @@ namespace recipes_backend
                 options.AddDefaultPolicy(builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:3000") // React app's URL
+                        .WithOrigins("https://recipes-frontend-kcb8.onrender.com") // React app's URL
                         .AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
