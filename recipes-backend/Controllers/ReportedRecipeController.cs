@@ -27,6 +27,7 @@ namespace recipes_backend.Controllers
             {
                 if(!recipeIds.Contains(recipe.RecipeId))
                 {
+                    recipeIds.Add(recipe.RecipeId);
                     string img = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/image/{recipe.Recipe.PictureId}";
                     reprtedRecipes.Add(new
                     {
@@ -57,23 +58,33 @@ namespace recipes_backend.Controllers
             }
 
             var reportedRecipe = _context.ReportedRecipes.FirstOrDefault(rr => rr.RecipeId == recipeId && rr.UserId == userId);
+            var reportedByOthers = _context.ReportedRecipes.FirstOrDefault(rr => rr.RecipeId == recipeId);
             if (reportedRecipe != null)
             {
                 return Ok("Already reported");
             }
             else
             {
-                reportedRecipe = new ReportedRecipe
+                if(reportedByOthers != null)
                 {
-                    UserId = userId,
-                    RecipeId = recipeId
-                };
+                    return Ok("Recipe Reported");
+                }
+                else
+                {
+                    reportedRecipe = new ReportedRecipe
+                    {
+                        UserId = userId,
+                        RecipeId = recipeId
+                    };
+                    _context.ReportedRecipes.Add(reportedRecipe);
+                    _context.SaveChanges();
+                }
+              
             }
 
 
 
-            _context.ReportedRecipes.Add(reportedRecipe);
-            _context.SaveChanges();
+           
 
             return Ok("Recipe Reported");
         }

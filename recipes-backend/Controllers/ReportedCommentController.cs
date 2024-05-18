@@ -95,22 +95,32 @@ namespace recipes_backend.Controllers
             }
 
             var reportedComment = _context.ReportedComments.FirstOrDefault(c=> c.CommentId==commentId && c.UserId == userId);
+            var reportedCommentByOthers = _context.ReportedComments.FirstOrDefault(c => c.CommentId == commentId);
             if(reportedComment != null) {
                 return Ok("Already reported");
             }
             else
             {
-                reportedComment = new ReportedComment
+                if (reportedCommentByOthers != null)
                 {
-                    UserId = userId,
-                    CommentId = commentId
-                };
+                    return Ok("Comment Reported");
+                }
+                else
+                {
+                    reportedComment = new ReportedComment
+                    {
+                        UserId = userId,
+                        CommentId = commentId
+                    };
+                    _context.ReportedComments.Add(reportedComment);
+                    _context.SaveChanges();
+                }
+                
             }
 
             
 
-            _context.ReportedComments.Add(reportedComment);
-            _context.SaveChanges();
+       
 
             return Ok("Comment Reported");
         }
